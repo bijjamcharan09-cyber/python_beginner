@@ -1,4 +1,9 @@
+import os
 FILE_NAME = "students.txt"
+if not os.path.exists(FILE_NAME):
+    with open(FILE_NAME, "w") as file:
+        pass
+print("File is created")
 
 while True:
     print("\n===== MENU =====")
@@ -11,51 +16,59 @@ while True:
 
     if choice == "1":
         name = input("Enter student name: ")
-        marks = input("Enter marks: ")
 
-        file = open(FILE_NAME, "a")
-        file.write(name + "," + marks + "\n")
-        file.close()
+        num_subjects = int(input("How many subjects? "))
+
+        record = name
+
+        for i in range(num_subjects):
+            subject = input("Enter subject name: ")
+            marks = input("Enter marks: ")
+
+            record += "," + subject + ":" + marks
+
+        with open(FILE_NAME, "a") as file:
+            file.write(record + "\n")
 
         print("Student record saved!")
 
     elif choice == "2":
         try:
-            file = open(FILE_NAME, "r")
+            with open(FILE_NAME, "r") as file:
+                print("\nStudent Records")
 
-            print("\nStudent Records")
-            for line in file:
-                name, marks = line.strip().split(",")
-                print("Name:", name, "| Marks:", marks)
+                for line in file:
+                    data = line.strip().split(",")
+                    name = data[0]
 
-            file.close()
+                    print("\nName:", name)
+
+                    for subject_data in data[1:]:
+                        subject, marks = subject_data.split(":")
+                        print(subject, ":", marks)
 
         except FileNotFoundError:
             print("No records found.")
-
     elif choice == "3":
         try:
-            file = open(FILE_NAME, "r")
+            with open(FILE_NAME, "r") as file:
+                for line in file:
+                    data = line.strip().split(",")
+                    name = data[0]
 
-            total = 0
-            count = 0
+                    total = 0
+                    count = 0
 
-            for line in file:
-                name, marks = line.strip().split(",")
-                total += int(marks)
-                count += 1
+                    for subject_data in data[1:]:
+                        subject, marks = subject_data.split(":")
+                        total += int(marks)
+                        count += 1
 
-            file.close()
-
-            if count > 0:
-                average = total / count
-                print("Average Marks:", average)
-            else:
-                print("No student records.")
+                    average = total / count if count else 0
+                    print(name, "Average =", average)
 
         except FileNotFoundError:
             print("No records found.")
-
     elif choice == "4":
         print("Program Ended.")
         break
