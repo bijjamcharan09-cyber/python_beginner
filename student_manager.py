@@ -1,12 +1,8 @@
-import os
-FILE_NAME=input("Enter file name: ")
-if not os.path.exists(FILE_NAME):
-    with open(FILE_NAME, "w") as file:
-        pass
-print("File is created")
+FILE_NAME= "student.txt"
+
 
 while True:
-    print("\n===== MENU =====")
+    print("_____\nMENU\n_____")
     print("1. Add Student")
     print("2. View Students")
     print("3. Calculate Average")
@@ -26,7 +22,7 @@ while True:
                 subject = input("Enter subject name: ")
                 marks = input("Enter marks: ")
 
-                record += "\n" + subject + ":" + marks
+                record += "," + subject + ":" + marks
 
             file = open(FILE_NAME, "a")
             file.write(record + "\n")
@@ -45,7 +41,7 @@ while True:
 
                 name = data[0]
 
-                print("\nName:\n", name)
+                print("\nName:", name)
 
                 for subject_data in data[1:]:
                     subject, marks = subject_data.split(":")
@@ -74,7 +70,7 @@ while True:
 
                 average = total / count
 
-                print(name, "Average =", average)
+                print(f"{name}'s Average =", average)
 
             file.close()
 
