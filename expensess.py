@@ -1,45 +1,71 @@
+from datetime import datetime
+
 def load_expenses(filename="expenses.txt"):
     expenses = []
+
     try:
         with open(filename, "r") as file:
             for line in file:
-                category, amount = line.strip().split(",")
-                expenses.append({"category": category, "amount": float(amount)})
+                category, amount, date, time = line.strip().split(",")
+
+                expenses.append({
+                    "category": category,
+                    "amount": float(amount),
+                    "date": date,
+                    "time": time
+                })
+
     except FileNotFoundError:
-        pass  
+        pass
+
     return expenses
 
 
 def save_expenses(expenses, filename="expenses.txt"):
     with open(filename, "w") as file:
         for expense in expenses:
-            file.write(f"{expense['category']},{expense['amount']}\n")
+            file.write(f"{expense['category']},{expense['amount']},{expense['date']},{expense['time']}\n")
 
 
 def add_expense(expenses):
-    category = input("Enter category:")
+    category = input("Enter category: ")
     amount = float(input("Enter amount: "))
-    expenses.append({"category": category, "amount": amount})
-    print("-------------\nExpense added\n-------------")
+
+    now = datetime.now()
+    date = now.strftime("%d-%m-%Y")
+    time = now.strftime("%I:%M:%S %p")
+
+    expenses.append({
+        "category": category,
+        "amount": amount,
+        "date": date,
+        "time": time
+    })
+
+    print("-------------")
+    print("Expense added")
+    print("-------------")
 
 
 def view_expenses(expenses):
     if not expenses:
         print("No expenses recorded yet.\n")
         return
+
     print("\n--- All Expenses ---")
     for i, expense in enumerate(expenses, start=1):
-        print(f"{i}. {expense['category']} - ₹{expense['amount']:.2f}")
+        print(f"{i}. Category:{expense['category']}\n   Amount:₹{expense['amount']:.2f}\n   Date:{expense['date']}\n   Time:{expense['time']}")
     print()
 
 
 def total_expenses(expenses):
     total = sum(expense["amount"] for expense in expenses)
     print(f"Total spent: ₹{total:.2f}\n")
-   
+
+
 def clear_expenses(expenses, filename="expenses.txt"):
-    expenses.clear() 
-    open(filename, "w").close()  
+    expenses.clear()
+    open(filename, "w").close()
     print("All expenses have been cleared!\n")
 
 
@@ -47,9 +73,11 @@ def main():
     expenses = load_expenses()
 
     continue_choice = "yes"
-    print("\t\t---------------\n\t\tExpense Tracker\n\t\t---------------")
+    print("\t\t---------------")
+    print("\t\tExpense Tracker")
+    print("\t\t---------------")
 
-    while continue_choice == "yes" or continue_choice=="1":
+    while continue_choice == "yes" or continue_choice == "1" or continue_choice == "y":
         print("1. Add Expense")
         print("2. View Expenses")
         print("3. Total Expenses")
@@ -61,22 +89,27 @@ def main():
         if choice == "1":
             add_expense(expenses)
             save_expenses(expenses)
+
         elif choice == "2":
             view_expenses(expenses)
+
         elif choice == "3":
             total_expenses(expenses)
-        elif choice=="4":
+
+        elif choice == "4":
             clear_expenses(expenses)
+
         elif choice == "5":
             print("Goodbye!")
             break
+
         else:
             print("Invalid choice, try again.\n")
 
         if choice != "5":
             continue_choice = input("Do you want to continue? (yes/no): ").strip().lower()
 
-    if (continue_choice != "yes" and continue_choice != "1")and choice != "4":
+    if continue_choice not in ("yes", "1") and choice != "4":
         print("Goodbye!")
 
 
