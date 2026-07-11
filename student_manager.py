@@ -99,30 +99,33 @@ def calculate_sgpa():
 
     except FileNotFoundError:
         print("No records found.")
-while True:
-    print("_____\nMENU\n_____")
-    print("1. Add Student")
-    print("2. View Students")
-    print("3. Calculate Average")
-    print("4. Clear Records")
-    print("5. Calculate SGPA")
-    print("6. Exit")
 
-    choice = input("Enter your choice: ")
+def main():
+    while True:
+        print("_____\nMENU\n_____")
+        print("1. Add Student")
+        print("2. View Students")
+        print("3. Calculate Average")
+        print("4. Clear Records")
+        print("5. Calculate SGPA")
+        print("6. Exit")
 
-    if choice == "1":
-        add_student()
+        choice = input("Enter your choice: ")
 
-    elif choice == "2":
-       view_students()
-    elif choice == "3":
-        calculate_average()
-    elif choice == "5":
-        calculate_sgpa()
-    elif choice == "6":
-        print("Program Ended.")
-        break
-    elif choice == "4":
-        clear_records()
-    else:
-        print("Invalid choice. Please try again.")
+        if choice == "1":
+            add_student()
+
+        elif choice == "2":
+            view_students()
+        elif choice == "3":
+            calculate_average()
+        elif choice == "5":
+            calculate_sgpa()
+        elif choice == "6":
+            print("Program Ended.")
+            break
+        elif choice == "4":
+            clear_records()
+        else:
+            print("Invalid choice. Please try again.")
+main()
