@@ -1,29 +1,31 @@
-#get input user for the first number
-num1=float(input("enter first number: "))
-print("num1=",num1)
-
-#get input for operator
-sign=input("sign (+,-,*,/,^,%) :")
-print("sign=",sign)
-
-#get input for the second number
-num2=float(input("enter second number: "))
-print("num2=",num2)
-if sign =="+":
-    s=num1 + num2
-    print("sum=",s)
-elif sign =="-":
-    d=num1 - num2
-    print("difference=",d)
-elif sign=="*":
-    m=num1 * num2
-    print("multiplication=",m)
-elif sign=="/":
-    q=num1 / num2
-    print("quotient=",q)
-elif sign=="%":
-    r=num1 % num2
-    print("remainder=",r)
-elif sign=="^":
-    result=num1 ** num2
-    print("exponent=",result)
+def calculate(num1, sign, num2):
+    if sign == '+':
+        return num1 + num2
+    elif sign == '-':
+        return num1 - num2
+    elif sign == '*':
+        return num1 * num2
+    elif sign == '/':
+        if num2 != 0:
+            return num1 / num2
+        else:
+            return "Error: Division by zero"
+    else:
+        return "Error: Invalid operator"
+def main():
+    print("Welcome to the Calculator!")
+    while True:
+        try:
+            num1 = float(input("Enter the first number: "))
+            sign = input("Enter an operator (+, -, *, /): ")
+            num2 = float(input("Enter the second number: "))
+            result = calculate(num1, sign, num2)
+            print(f"Result: {result}\n")
+        except ValueError:
+            print("Invalid input. Please enter numeric values.\n")
+        
+        continue_choice = input("Do you want to perform another calculation? (yes/no): ").strip().lower()
+        if continue_choice != "yes":
+            print("Goodbye!")
+            break
+main()
