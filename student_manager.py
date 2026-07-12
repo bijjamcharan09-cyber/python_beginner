@@ -100,6 +100,31 @@ def calculate_sgpa():
     except FileNotFoundError:
         print("No records found.")
 
+def delete_student():
+    name_to_delete = input("Enter student name to delete: ")
+
+    try:
+        with open(FILE_NAME, "r") as file:
+            records = file.readlines()
+
+        found = False
+
+        with open(FILE_NAME, "w") as file:
+            for record in records:
+                data = record.strip().split(",")
+
+                if data[0].lower() != name_to_delete.lower():
+                    file.write(record)
+                else:
+                    found = True
+
+        if found:
+            print("Student record deleted successfully.")
+        else:
+            print("Student not found.")
+
+    except FileNotFoundError:
+        print("No records found.")
 def main():
     while True:
         print("_____\nMENU\n_____")
@@ -108,7 +133,8 @@ def main():
         print("3. Calculate Average")
         print("4. Clear Records")
         print("5. Calculate SGPA")
-        print("6. Exit")
+        print("6. Delete Student Record")
+        print("7. Exit")
 
         choice = input("Enter your choice: ")
 
@@ -122,6 +148,8 @@ def main():
         elif choice == "5":
             calculate_sgpa()
         elif choice == "6":
+            delete_student()
+        elif choice == "7":
             print("Program Ended.")
             break
         elif choice == "4":
