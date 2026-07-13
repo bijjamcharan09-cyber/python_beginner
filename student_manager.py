@@ -125,16 +125,30 @@ def delete_student():
 
     except FileNotFoundError:
         print("No records found.")
+
+def total_students():#calculate total students
+    try:
+        with open(FILE_NAME, "r") as file:
+            records = file.readlines()
+            total = len(records)
+            if total == 0:
+                print("No Student records found.")
+            else:
+                print(f"Total Students: {total}")
+    except FileNotFoundError:
+        print("No records found.")    
 def main():
+    print("_______________\n\nStudent Manager\n_______________")
     while True:
-        print("_____\nMENU\n_____")
+        print("\n******\n MENU\n******")
         print("1. Add Student")
         print("2. View Students")
         print("3. Calculate Average")
         print("4. Clear Records")
         print("5. Calculate SGPA")
         print("6. Delete Student Record")
-        print("7. Exit")
+        print("7. Total Students")
+        print("8. Exit")
 
         choice = input("Enter your choice: ")
 
@@ -149,11 +163,13 @@ def main():
             calculate_sgpa()
         elif choice == "6":
             delete_student()
-        elif choice == "7":
+        elif choice == "8":
             print("Program Ended.")
             break
         elif choice == "4":
             clear_records()
+        elif choice == "7":
+            total_students()
         else:
             print("Invalid choice. Please try again.")
 main()
