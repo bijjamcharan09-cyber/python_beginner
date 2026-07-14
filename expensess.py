@@ -176,12 +176,12 @@ def main():
     expenses = load_expenses()
 
     continue_choice = "yes"
-    print("\t\t---------------")
-    print("\t\tExpense Tracker")
-    print("\t\t---------------")
+    print("---------------")
+    print("Expense Tracker")
+    print("---------------")
 
     while continue_choice in ["yes", "y", "1"]:
-        print("1. Add Expense")
+        print("\n1. Add Expense")
         print("2. View Expenses")
         print("3. Total Expenses")
         print("4. Clear Expenses")
@@ -190,7 +190,7 @@ def main():
         print("7. Edit Expense")
         print("8. Exit")
 
-        choice = input("Choose an option (1-7): ")
+        choice = input("Choose an option (1-8): ")
 
         match choice:
             case "1":
