@@ -7,8 +7,9 @@ def load_expenses(filename="expenses.txt"):
         with open(filename, "r") as file:
             for line in file:
                try:
-                    category, amount, date, time = line.strip().split(",")
+                    transaction, category, amount, date, time = line.strip().split(",")
                     expenses.append({
+                        "transaction": transaction,
                         "category": category,
                         "amount": float(amount),
                         "date": date,
@@ -28,44 +29,54 @@ def save_expenses(expenses, filename="expenses.txt"):
         with open(filename, "w") as file:
             for expense in expenses:
                  file.write(
-                f"{expense['category']},{expense['amount']},{expense['date']},{expense['time']}\n"
+                f"{expense['transaction']},{expense['category']},{expense['amount']},{expense['date']},{expense['time']}\n"
             )
     except IOError:
         print("Error saving expenses.")
     
-
-
 def add_expense(expenses):
     while True:
-        category = input("Enter category: ").strip()
+        transaction = input("Enter transaction type (Income/Expense): ").strip().capitalize()
+
+        if transaction in ("Income", "Expense"):
+            break
+
+        print("Please enter either 'Income' or 'Expense'.")
+
+    while True:
+        category = input("Enter category: ").strip().capitalize()
 
         if category:
             break
 
         print("Category cannot be empty.")
+
     while True:
         try:
             amount = float(input("Enter amount: ₹"))
-            if amount < 0:
-                raise ValueError("Amount cannot be negative.")
+
+            if amount <= 0:
+                print("Amount must be greater than 0.")
+                continue
+
             break
-        except ValueError as e:
-            print(f"Invalid input: {e}. Please enter a valid number.")
+
+        except ValueError:
+            print("Please enter a valid amount.")
 
     now = datetime.now()
-    date = now.strftime("%d-%m-%Y")
-    time = now.strftime("%I:%M:%S %p")
 
     expenses.append({
+        "transaction": transaction,
         "category": category,
         "amount": amount,
-        "date": date,
-        "time": time
+        "date": now.strftime("%d-%m-%Y"),
+        "time": now.strftime("%I:%M:%S %p")
     })
 
-    print("-------------")
-    print("Expense added")
-    print("-------------")
+    print("-------------------------")
+    print(f"{transaction} added successfully.")
+    print("-------------------------")
 
 
 def view_expenses(expenses):
@@ -75,24 +86,30 @@ def view_expenses(expenses):
 
     print("\n--- All Expenses ---")
     for i, expense in enumerate(expenses, start=1):
-        print(f"{i}. Category:{expense['category']}\n   Amount:₹{expense['amount']:.2f}\n   Date:{expense['date']}\n   Time:{expense['time']}")
+        print(f"{i}. Transaction: {expense['transaction']}\n   Category: {expense['category']}\n   Amount: ₹{expense['amount']:.2f}\n   Date: {expense['date']}\n   Time: {expense['time']}")
     print()
 
 
 def total_expenses(expenses):
-    total = sum(expense["amount"] for expense in expenses)
-    print(f"Total spent: ₹{total:.2f}\n")
+    total = sum(
+        expense["amount"]
+        for expense in expenses
+        if expense["transaction"] == "expense" or expense["transaction"] == "Expense"
+    )
+    print(f"Total Expenses: ₹{total:.2f}\n")
 
 
-def clear_expenses(expenses, filename="expenses.txt"):
-     confirm = input("Are you sure? (yes/no): ").lower()
+def clear_expenses(expenses, filename="tracker.txt"):
+    confirm = input("Are you sure? (yes/no): ").lower()
 
-     if confirm == "yes":
-        expenses.clear()
-        open(filename, "w").close()
-        print("All expenses cleared!")
-     else:
-        print("Operation cancelled.")
+    for expense in expenses:
+        if expense["transaction"] == "Expense" or expense["transaction"] == "Income":
+            if confirm == "yes":
+                expenses.clear()
+                open(filename, "w").close()
+                print("All expenses cleared!")
+            else:
+                print("Operation cancelled.")
 
 def search_expense(expenses):
     name = input("Enter category: ").lower()
@@ -149,9 +166,14 @@ def edit_expense(expenses):
 
         print("\nLeave blank to keep the current value.")
 
-        category = input(f"New category ({expenses[index]['category']}): ").strip()
+        transaction = input(f"New transaction({expenses[index]['transaction']}): ").strip().capitalize()
 
-        amount = input(f"New amount (₹{expenses[index]['amount']:.2f}): ").strip()
+        category = input(f"New category ({expenses[index]['category']}): ").strip().capitalize()
+
+        amount = input(f"New amount (₹{expenses[index]['amount']:.2f}): ").strip().capitalize()
+
+        if transaction:
+            expenses[index]["transaction"] = transaction
 
         if category:
             expenses[index]["category"] = category
@@ -172,6 +194,26 @@ def edit_expense(expenses):
 
     except ValueError:
         print("Please enter a valid number.\n")
+
+def current_balance(expenses):
+    total_income = 0
+    total_expense = 0
+
+    for expense in expenses:
+        if expense["transaction"] == "Income":
+            total_income += expense["amount"]
+
+        elif expense["transaction"] == "Expense":
+            total_expense += expense["amount"]
+
+    balance = total_income - total_expense
+
+    print("\n------ Current Balance ------")
+    print(f"Total Income   : ₹{total_income:.2f}")
+    print(f"Total Expenses : ₹{total_expense:.2f}")
+    print(f"Current Balance: ₹{balance:.2f}")
+    print("-----------------------------\n")
+
 def main():
     expenses = load_expenses()
 
@@ -188,9 +230,10 @@ def main():
         print("5. Search Expense")
         print("6. Delete Expense")
         print("7. Edit Expense")
-        print("8. Exit")
+        print("8. Current Balance")
+        print("9. Exit")
 
-        choice = input("Choose an option (1-8): ")
+        choice = input("Choose an option (1-9): ")
 
         match choice:
             case "1":
@@ -209,6 +252,8 @@ def main():
             case "7":
                 edit_expense(expenses)
             case "8":
+                current_balance(expenses)
+            case "9":
                 save_expenses(expenses)
                 print("Exiting...")
                 break
