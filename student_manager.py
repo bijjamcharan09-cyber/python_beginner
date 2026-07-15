@@ -1,11 +1,11 @@
 FILE_NAME= "student.txt"
 def add_student():
-    name = input("Enter student name: ")
+    name = input("Enter student name: ").capitalize()
     num_subjects = int(input("How many subjects? "))
     record = name
 
     for i in range(num_subjects):
-        subject = input("Enter subject name: ")
+        subject = input("Enter subject name: ").capitalize()
         marks = input("Enter marks: ")
         credits = input("Enter credits for this subject: ")
         record += "," + subject + ":" + marks + ":" + credits
@@ -34,7 +34,7 @@ def view_students():
 
                 print(f"\nStudent {student_no}")
                 print("-" * 15)
-                print(f"Name : {name}")
+                print(f"Name : {name}\n")
                 for i, subject_data in enumerate(data[1:], start=1):
                     subject, marks, credits = subject_data.split(":")
                     print(f"{i}. Subject : {subject}")
@@ -167,21 +167,100 @@ def search_student():
                 if data[0].lower() == name.lower():
                     found = True
                     print("\nStudent Found")
-                    print("Name:", data[0])
+                    print(" Name:", data[0])
 
                     for subject in data[1:]:
                         sub, marks, credits = subject.split(":")
-                        print(f"{sub} -> Marks: {marks}, Credits: {credits}")
+                        print(f" Subject: {sub}\n Marks: {marks}\n Credits: {credits}")
 
             if not found:
                 print("Student not found.")
 
     except FileNotFoundError:
         print("No records found.")  
+
+def update_student():
+    name_to_update = input("Enter student name to update: ")
+
+    try:
+        with open(FILE_NAME, "r") as file:
+            records = file.readlines()
+
+        found = False
+
+        with open(FILE_NAME, "w") as file:
+            for record in records:
+                data = record.strip().split(",")
+
+                if data[0].lower() == name_to_update.lower():
+                    found = True
+
+                    print("\nCurrent Record")
+                    print("-" * 40)
+                    print("Name:", data[0])
+
+                    for i, subject_data in enumerate(data[1:], start=1):
+                        subject, marks, credits = subject_data.split(":")
+                        print(f"{i}. {subject} | Marks: {marks} | Credits: {credits}")
+                    print("=" * 40)
+                    print("\nEnter New Details")
+                    print("=" * 40)
+
+                    new_name = input("Enter new student name: ").capitalize()
+
+                    while True:
+                        try:
+                            num_subjects = int(input("Enter number of subjects: "))
+                            if num_subjects > 0:
+                                break
+                            print("Enter at least one subject.")
+                        except ValueError:
+                            print("Enter a valid number.")
+
+                    new_record = new_name
+
+                    for i in range(num_subjects):
+                        print(f"\nSubject {i+1}")
+
+                        subject = input("Subject Name : ").capitalize()
+
+                        while True:
+                            try:
+                                marks = int(input("Marks (0-100): "))
+                                if 0 <= marks <= 100:
+                                    break
+                                print("Marks must be between 0 and 100.")
+                            except ValueError:
+                                print("Enter valid marks.")
+
+                        while True:
+                            try:
+                                credits = int(input("Credits : "))
+                                if credits > 0:
+                                    break
+                                print("Credits must be greater than 0.")
+                            except ValueError:
+                                print("Enter valid credits.")
+
+                        new_record += f",{subject}:{marks}:{credits}"
+
+                    file.write(new_record + "\n")
+
+                else:
+                    file.write(record)
+
+        if found:
+            print("\nStudent record updated successfully.")
+        else:
+            print("\nStudent not found.")
+
+    except FileNotFoundError:
+        print("No records found.")
+
 def main():
-    print("_______________\n\nStudent Manager\n_______________")
+    print("=" *15 + "\nStudent Manager\n" +"=" *15)
     while True:
-        print("\n******\n MENU\n******")
+        print("-" *16 + "\n      MENU\n" +"-" *16)
         print("1. Add Student")
         print("2. View Students")
         print("3. Calculate Average")
@@ -190,9 +269,10 @@ def main():
         print("6. Delete Student Record")
         print("7. Total Students")
         print("8. Search Student")
-        print("9. Exit")
+        print("9. Update Student Record")
+        print("10. Exit")
 
-        choice = input("Enter your choice(1-9): ")
+        choice = input("Enter your choice(1-10): ")
 
         if choice == "1":
             add_student()
@@ -212,6 +292,8 @@ def main():
         elif choice == "8":
             search_student()
         elif choice == "9":
+            update_student()
+        elif choice == "10":
             print("Program Ended.")
             break
         else:
