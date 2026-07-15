@@ -18,17 +18,33 @@ def add_student():
 def view_students():
     try:
         with open(FILE_NAME, "r") as file:
-            print("\nStudent Records")
-            for line in file:
+            records = file.readlines()
+
+            if not records:
+                print("\nNo student records found.")
+                return
+
+            print("\n" + "=" * 15)
+            print("STUDENT RECORDS")
+            print("=" * 15)
+
+            for student_no, line in enumerate(records, start=1):
                 data = line.strip().split(",")
                 name = data[0]
-                print("\nName:", name)
-                for subject_data in data[1:]:
+
+                print(f"\nStudent {student_no}")
+                print("-" * 15)
+                print(f"Name : {name}")
+                for i, subject_data in enumerate(data[1:], start=1):
                     subject, marks, credits = subject_data.split(":")
-                    print(f"Subject: {subject} --> Marks: {marks} --> Credits: {credits}")
+                    print(f"{i}. Subject : {subject}")
+                    print(f"   Marks   : {marks}")
+                    print(f"   Credits : {credits}")
+
+            print("\n" + "=" * 15)
+
     except FileNotFoundError:
         print("No records found.")
-
 def calculate_average():
     try:
         with open(FILE_NAME, "r") as file:
@@ -136,7 +152,32 @@ def total_students():#calculate total students
             else:
                 print(f"Total Students: {total}")
     except FileNotFoundError:
-        print("No records found.")    
+        print("No records found.")  
+
+def search_student():
+    name = input("Enter student name to search: ")
+
+    try:
+        with open(FILE_NAME, "r") as file:
+            found = False
+
+            for line in file:
+                data = line.strip().split(",")
+
+                if data[0].lower() == name.lower():
+                    found = True
+                    print("\nStudent Found")
+                    print("Name:", data[0])
+
+                    for subject in data[1:]:
+                        sub, marks, credits = subject.split(":")
+                        print(f"{sub} -> Marks: {marks}, Credits: {credits}")
+
+            if not found:
+                print("Student not found.")
+
+    except FileNotFoundError:
+        print("No records found.")  
 def main():
     print("_______________\n\nStudent Manager\n_______________")
     while True:
@@ -148,9 +189,10 @@ def main():
         print("5. Calculate SGPA")
         print("6. Delete Student Record")
         print("7. Total Students")
-        print("8. Exit")
+        print("8. Search Student")
+        print("9. Exit")
 
-        choice = input("Enter your choice: ")
+        choice = input("Enter your choice(1-9): ")
 
         if choice == "1":
             add_student()
@@ -159,17 +201,23 @@ def main():
             view_students()
         elif choice == "3":
             calculate_average()
+        elif choice == "4":
+            clear_records()
         elif choice == "5":
             calculate_sgpa()
         elif choice == "6":
             delete_student()
-        elif choice == "8":
-            print("Program Ended.")
-            break
-        elif choice == "4":
-            clear_records()
         elif choice == "7":
             total_students()
+        elif choice == "8":
+            search_student()
+        elif choice == "9":
+            print("Program Ended.")
+            break
         else:
             print("Invalid choice. Please try again.")
-main()
+if __name__ == "__main__":
+    try:
+        main()
+    except KeyboardInterrupt:
+        print("\nProgram interrupted.")
